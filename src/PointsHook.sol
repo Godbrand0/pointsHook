@@ -14,7 +14,26 @@ import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
  
 import {Hooks} from "v4-core/libraries/Hooks.sol";
  
+/**
+ * @title PointsHook
+ * @notice Uniswap V4 hook that awards loyalty points for swaps
+ *
+ * Features:
+ * - Awards ERC1155 points to users who swap ETH for tokens
+ * - Tracks total points awarded per pool for analytics
+ * - Points are calculated as 20% of ETH spent in swaps
+ *
+ * Pool Points Tracking:
+ * - Each pool maintains a separate counter for total points awarded
+ * - This enables analytics on pool-specific engagement
+ * - Data can be accessed via getTotalPointsByPool() function
+ */
 contract PointsHook is BaseHook, ERC1155 {
+    // Mapping to track total points awarded per pool
+    // Key: PoolId - Unique identifier for each Uniswap V4 pool
+    // Value: uint256 - Cumulative points awarded in this pool
+    mapping(PoolId => uint256) public totalPointsByPool;
+
     constructor(
         IPoolManager _manager
     ) BaseHook(_manager) {}
@@ -51,6 +70,18 @@ contract PointsHook is BaseHook, ERC1155 {
         return "https://api.example.com/token/{id}";
     }
 
+    /**
+     * @dev Assigns points to a user and tracks pool totals
+     *
+     * This function:
+     * 1. Validates the hookData contains a valid user address
+     * 2. Mints ERC1155 points to the user (poolId is used as tokenId)
+     * 3. Updates the pool's total points counter
+     *
+     * @param poolId The ID of the pool where the swap occurred
+     * @param hookData Calldata containing the user address (abi-encoded)
+     * @param points The amount of points to award
+     */
     function _assignPoints(
     PoolId poolId,
     bytes calldata hookData,
@@ -69,7 +100,26 @@ contract PointsHook is BaseHook, ERC1155 {
     // Mint points to the user
     uint256 poolIdUint = uint256(PoolId.unwrap(poolId));
     _mint(user, poolIdUint, points, "");
+    
+    // Update pool analytics: increment total points awarded for this pool
+    totalPointsByPool[poolId] += points;
 }
+
+    /**
+     * @notice Gets the total points awarded for a specific pool
+     * @dev This is useful for analytics and understanding pool engagement
+     *
+     * Example:
+     *   PoolId poolId = key.toId();
+     *   uint256 totalPoints = pointsHook.getTotalPointsByPool(poolId);
+     *   console.log("Pool has awarded", totalPoints, "points in total");
+     *
+     * @param poolId The ID of the pool to query
+     * @return totalPoints The total points awarded in this pool since deployment
+     */
+    function getTotalPointsByPool(PoolId poolId) external view returns (uint256 totalPoints) {
+        return totalPointsByPool[poolId];
+    }
  
 	function _afterSwap(
     address,
