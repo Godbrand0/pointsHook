@@ -78,15 +78,7 @@ forge build
 forge test
 ```
 
-## Future Enhancements
 
-Potential features to add:
-- Dynamic points rates per pool
-- Points redemption system
-- User tier levels based on points
-- Referral bonuses
-- Points expiration mechanisms
-- Cross-pool analytics
 
 ## License
 
