@@ -78,6 +78,73 @@ forge build
 forge test
 ```
 
+## Deployment
+
+### Environment Setup
+1. Copy `.env.example` to `.env` and fill in your values:
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` with your deployment parameters:
+- `PRIVATE_KEY`: Your deployer private key (without 0x prefix)
+- `POOL_MANAGER_ADDRESS`: The Uniswap V4 PoolManager address for your target network
+- `RPC_URL`: RPC endpoint for the network you're deploying to
+- `CHAIN_ID`: Chain ID of the target network
+- `ETHERSCAN_API_KEY`: (Optional) API key for contract verification
+
+### Deploying to Testnet
+```bash
+forge script script/DeployPointsHook.s.sol \
+  --rpc-url $RPC_URL \
+  --chain-id $CHAIN_ID \
+  --broadcast
+```
+
+### Deploying to Mainnet
+```bash
+forge script script/DeployPointsHook.s.sol \
+  --rpc-url $RPC_URL \
+  --chain-id $CHAIN_ID \
+  --broadcast \
+  --verify
+```
+
+### Dry Run (Simulation)
+To simulate deployment without actually deploying:
+```bash
+forge script script/DeployPointsHook.s.sol \
+  --rpc-url $RPC_URL \
+  --chain-id $CHAIN_ID
+```
+
+### Network-Specific PoolManager Addresses
+- Base Sepolia Testnet: `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408`
+
+
+Note: Check the official Uniswap V4 documentation for the latest PoolManager addresses.
+
+## Deployed Contracts
+
+### Base Sepolia Testnet
+- **Contract Address**: `0xf03941828424a65c4A5fCD50B4957a1bE2228040`
+- **Network**: Base Sepolia (Chain ID: 84532)
+- **Transaction Hash**: `0x2fa366e774895b63275486f03ee42acbd486c93e37af4adc5724cb9793180621`
+- **Block Number**: 33089427
+- **Gas Used**: 1,668,461
+- **Deployment Cost**: 0.000001668679568391 ETH
+- **Verification**: [Verified on Basescan](https://sepolia.basescan.org/address/0xf03941828424a65c4a5fcd50b4957a1be2228040)
+- **PoolManager**: `0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408`
+
+### Deployment Command Used
+```bash
+forge script script/PointsHook.s.sol:PointsHookScript \
+  --rpc-url https://sepolia.base.org \
+  --chain-id 84532 \
+  --broadcast \
+  --verify
+```
+
 
 
 ## License
