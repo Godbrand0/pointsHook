@@ -83,7 +83,7 @@ contract PointsHookTest is Test, Deployers {
     }
 
     function test_getTotalPointsByPool_returnsCorrectValue() public view {
-        // Test the getter function
+        // Test's getter function
         assertEq(hook.getTotalPointsByPool(poolKey.toId()), 0);
         assertEq(hook.getTotalPointsByPool(poolKey2.toId()), 0);
     }
